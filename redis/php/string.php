@@ -1,5 +1,25 @@
 <?php
 
+/**
+ * set name cxx
+ * get name
+ * getrange name 0 -1        字符串分段
+ * getset name new_cxx       设置值，返回旧值
+ * mset key1 key2            批量设置
+ * mget key1 key2            批量获取
+ * setnx key value           不存在就插入（not exists）
+ * setex key time value      过期时间（expire）
+ * setrange key index value  从index开始替换value
+ * incr age        递增
+ * incrby age 10   递增
+ * decr age        递减
+ * decrby age 10   递减
+ * incrbyfloat     增减浮点数
+ * append          追加
+ * strlen          长度
+ * getbit/setbit/bitcount/bitop    位操作
+ */
+
 echo "<pre>";
 $redis = new Redis();
 $redis->connect("redis");
@@ -50,41 +70,39 @@ print_r($redis->mget(["string", "string2", "string3"]));
 
 print_r("<br>不存在就插入:");
 print_r("<br>不存在就插入:插入string:");
-var_dump($redis->setNx("string" , 1000)); //bool,存在无法插入
+var_dump($redis->setNx("string", 1000)); //bool,存在无法插入
 print_r("不存在就插入:插入string4");
-var_dump($redis->setNx("string4:" , 1000)); //bool,不存在插入成功
-
+var_dump($redis->setNx("string4:", 1000)); //bool,不存在插入成功
 
 
 print_r("插入带过期时间:");
-var_dump($redis->setEx("string5" , 1000 , 2000)); //bool
+var_dump($redis->setEx("string5", 1000, 2000)); //bool
 
 print_r("替换:");
-var_dump($redis->setRange("string5" , 1 , 2000)); //返回字符串长度
-var_dump($redis->get("string5" )); //22000
+var_dump($redis->setRange("string5", 1, 2000)); //返回字符串长度
+var_dump($redis->get("string5")); //22000
 
 
 print_r("递增:");
-var_dump($redis->incr("age" )); //1
+var_dump($redis->incr("age")); //1
 print_r("递增10:");
-var_dump($redis->incrBy("age" ,10 )); //11
-
+var_dump($redis->incrBy("age", 10)); //11
 
 
 print_r("递减:");
-var_dump($redis->decr("age" )); //10
+var_dump($redis->decr("age")); //10
 print_r("递减10:");
-var_dump($redis->decrBy("age" ,10 )); //0
+var_dump($redis->decrBy("age", 10)); //0
 
 //小数点过多是php的问题
 print_r("增减浮点数,增加100.11:");
-var_dump($redis->incrByFloat("money" , 100.11 )); //float(100.10999999999)
+var_dump($redis->incrByFloat("money", 100.11)); //float(100.10999999999)
 print_r("减少100.11:");
-var_dump($redis->incrByFloat("money" ,-99.2 )); //float(0.91000000000008)
+var_dump($redis->incrByFloat("money", -99.2)); //float(0.91000000000008)
 
 
 print_r("追加:");
-var_dump($redis->append("age1" , 10 ));
+var_dump($redis->append("age1", 10));
 var_dump($redis->get("age1")); //10 第二次 1010
 
 print_r("获取字符串长度:");
