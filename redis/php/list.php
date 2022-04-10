@@ -64,7 +64,7 @@ print_r($redis->lLen("test:mylist")); //14
 
 print_r("</br>list指定值删除:");
 //count 删除多少个
-print_r($redis->lRem("test:mylist" , 'a' , 100));  //bool
+print_r($redis->lRem("test:mylist", 'a', 100));  //bool
 //这里可以看到所有的a都删除了
 print_r($redis->lRange("test:mylist", 0, -1));
 
@@ -73,21 +73,21 @@ print_r("</br>list获取指定索引值:");
 print_r($redis->lIndex("test:mylist", 13)); //具体值
 
 print_r("</br>修改指定索引的值:");
-print_r($redis->lSet("test:mylist", 10 , "你好")); //bool
+print_r($redis->lSet("test:mylist", 10, "你好")); //bool
 print_r($redis->lRange("test:mylist", 0, -1));
 
 print_r("</br>根据key保留指定list内容,其他删除:");
-print_r($redis->lTrim("test:mylist", 0 , 10)); //bool
+print_r($redis->lTrim("test:mylist", 0, 10)); //bool
 print_r($redis->lRange("test:mylist", 0, -1));
 
 print_r("</br>插入:");
 //pivot:是指那个元素
-print_r($redis->lInsert("test:mylist", Redis::AFTER, "你好" , "结尾"));
+print_r($redis->lInsert("test:mylist", Redis::AFTER, "你好", "结尾"));
 
 print_r($redis->lRange("test:mylist", 0, -1));
 
 
-print_r($redis->lInsert("test:mylist", Redis::BEFORE, "你好" , "开头"));
+print_r($redis->lInsert("test:mylist", Redis::BEFORE, "你好", "开头"));
 print_r($redis->lRange("test:mylist", 0, -1));
 
 
@@ -97,10 +97,42 @@ print_r($redis->lRange("test:mylist2", 0, -1));
 print_r($redis->lRange("test:mylist", 0, -1));
 
 
+//简单的消息队列应用
+//增加A应用
+$redis->rPush("test:mylist3", "a");
+$redis->rPush("test:mylist3", "b");
+$redis->rPush("test:mylist3", "c");
+print_r($redis->lRange("test:mylist3", 0, -1));
 
+//触发应用
+function runList(Redis $redis)
+{
+    $redisKey = "test:mylist3";
+    $countNum = $redis->lLen($redisKey);
 
+    if ($countNum > 0) {
+        while ($countNum > 0) {
+            $runString = $redis->lPop($redisKey);
 
+            switch ($runString) {
+                case "a":
+                    print_r("</br>这是a应用,如果遇到错误,写入错误日志,并写好重调");
+                    break;
+                case "b":
+                    print_r("</br>这是b应用,如果遇到错误,写入错误日志,并写好重调");
+                    break;
+                default:
+                    print_r("</br>未知应用,写入日志并通知开发者");
+                    break;
+            }
+            $countNum--;
+        }
 
+    }
+}
+
+//定时触发
+runList($redis);
 
 
 
