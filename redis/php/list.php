@@ -79,3 +79,34 @@ print_r($redis->lRange("test:mylist", 0, -1));
 print_r("</br>根据key保留指定list内容,其他删除:");
 print_r($redis->lTrim("test:mylist", 0 , 10)); //bool
 print_r($redis->lRange("test:mylist", 0, -1));
+
+print_r("</br>插入:");
+//pivot:是指那个元素
+print_r($redis->lInsert("test:mylist", Redis::AFTER, "你好" , "结尾"));
+
+print_r($redis->lRange("test:mylist", 0, -1));
+
+
+print_r($redis->lInsert("test:mylist", Redis::BEFORE, "你好" , "开头"));
+print_r($redis->lRange("test:mylist", 0, -1));
+
+
+print_r("</br>把最后一个元素转移list:");
+print_r($redis->rPopLPush("test:mylist", "test:mylist2"));
+print_r($redis->lRange("test:mylist2", 0, -1));
+print_r($redis->lRange("test:mylist", 0, -1));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
